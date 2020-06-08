@@ -117,53 +117,53 @@ const initPrun = () => {
 
 const initCPPrun = () => {
   cPPrun = Array(5040);
+  cPPrun.fill(15);
 
-  let visited = Array(5040);
-  visited.fill(0);
-  let cur;
-  let queue = new Queue();
-  let children;
-  let done = 0;
+  let children, done, depth;
 
-  queue.push([0, 0]);
-  visited[0] = 1;
+  cPPrun[0] = 0;
+  done = 1;
+  depth = 0;
+
   while (done < 5040) {
-    cur = queue.pop();
-    cPPrun[cur[0]] = cur[1];
-    done++;
-    children = cPTable[cur[0]];
-    for (let i = 0; i < 9; i++) {
-      if (visited[children[i]] === 0) {
-        visited[children[i]] = 1;
-        queue.push([children[i], cur[1] + 1]);
+    for (let i = 0; i < 5040; i++) {
+      if (cPPrun[i] !== depth ) continue;
+
+      children = cPTable[i];
+      for (let j = 0; j < 9; j++) {
+        if (cPPrun[children[j]] === 15) {
+          cPPrun[children[j]] = depth + 1;
+          done++;
+        }
       }
     }
+    depth++;
   }
 }
 
 const initTwistPrun = () => {
   twistPrun = Array(729);
+  twistPrun.fill(15);
 
-  let visited = Array(729);
-  visited.fill(0);
-  let cur;
-  let queue = new Queue();
-  let children;
-  let done = 0;
+  let children, done, depth;
 
-  queue.push([0, 0]);
-  visited[0] = 1;
+  twistPrun[0] = 0;
+  done = 1;
+  depth = 0;
+
   while (done < 729) {
-    cur = queue.pop();
-    twistPrun[cur[0]] = cur[1];
-    done++;
-    children = twistTable[cur[0]];
-    for (let i = 0; i < 9; i++) {
-      if (visited[children[i]] === 0) {
-        visited[children[i]] = 1;
-        queue.push([children[i], cur[1] + 1]);
+    for (let i = 0; i < 729; i++) {
+      if (twistPrun[i] !== depth ) continue;
+
+      children = twistTable[i];
+      for (let j = 0; j < 9; j++) {
+        if (twistPrun[children[j]] === 15) {
+          twistPrun[children[j]] = depth + 1;
+          done++;
+        }
       }
     }
+    depth++;
   }
 }
 
@@ -311,26 +311,16 @@ class Stack {
 
 const search = (root) => {
   let solution = null;
-  let start, end;
-  start = Date.now();
   for (let d = 0; d <= 13; d++) {
     solution = _search(root, d);
     if (solution !== null) {
-      end = Date.now();
-      console.log((end - start) + ' ms');
       return solution;
-    }    
+    }
   }
+  return null;
 }
 
 const _search = (root, depth) => {
-  let evaluated = 0;
-  let expanded = 0;
-
-  let startTime;
-  let endTime;
-  startTime = Date.now();
-
   let stack = new Stack(); // obj = [cperm, twist, mv]
   stack.push([
     getCP(root),
@@ -339,14 +329,9 @@ const _search = (root, depth) => {
   ]);
   let cur;
   while(stack.size() > 0) {
-    evaluated++;
     cur = stack.pop();
 
     if(cur[0] === 0 && cur[1] === 0) {
-      endTime = Date.now();
-      console.log(
-        'depth=' + depth + ' [expanded: ' + expanded + ', evaluated: ' + evaluated + ', ' + (endTime - startTime) + ' ms]'
-      );
       return cur[2];
     }
 
@@ -354,8 +339,6 @@ const _search = (root, depth) => {
       || cur[2].length + twistPrun[cur[1]] > depth) {
       continue;
     }
-
-    expanded++;
 
     for (let i = 0; i < 9; i++) {
       let face = i / 3 | 0;
@@ -371,11 +354,6 @@ const _search = (root, depth) => {
       }
     }
   }
-
-  endTime = Date.now();
-  console.log(
-    'depth=' + depth + ' [expanded: ' + expanded + ', evaluated: ' + evaluated + ', ' + (endTime - startTime) + 'ms]'
-  );
 
   return null;
 }
@@ -411,7 +389,7 @@ const solve = (scramble) => {
   let solution = '';
 
   for (let i = 0; i < arr.length; i++) {
-    $apply(obj, moveObject[moveName.indexOf(arr[i])]);
+    if (moveName.indexOf(arr[i]) >= 0) $apply(obj, moveObject[moveName.indexOf(arr[i])]);
   }
 
   _solution = search(obj);
@@ -443,4 +421,4 @@ return {
   getScramble: getScramble,
 }
 
-})()
+})();
