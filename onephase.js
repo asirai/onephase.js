@@ -1,20 +1,3 @@
-/*
-numbering
-         +--------+
-         | 02  03 |
-         |        |            
-         | 01  00 |
-+--------+--------+--------+--------+
-| 02  01 | 01  00 | 00  03 | 03  02 |
-|        |        |        |        |
-| 07  06 | 06  04 | 04  05 | 05  07 |
-+--------+--------+--------+--------+
-         | 06  04 |
-         |        |
-         | 07  05 |
-         +--------+
-*/
-
 let ONEPHASE = {};
 
 ONEPHASE.onephase = (() => {
@@ -255,33 +238,6 @@ class Random {
   }
 }
 
-class Queue {
-  constructor() {
-    this.heap = [];
-  }
-
-  empty() {
-    if (this.heap.length === 0) return true;
-    return false;
-  }
-
-  size() {
-    return this.heap.length;
-  }
-
-  top() {
-    return this.heap[0];
-  }
-
-  push(item) {
-    this.heap.push(item);
-  }
-  
-  pop() {
-    return this.heap.shift();
-  }
-}
-
 class Stack {
   constructor() {
     this.heap = [];
@@ -321,7 +277,7 @@ const search = (root) => {
 }
 
 const _search = (root, depth) => {
-  let stack = new Stack(); // obj = [cperm, twist, mv]
+  let stack = new Stack();
   stack.push([
     getCP(root),
     getTwist(root),
@@ -401,9 +357,8 @@ const solve = (scramble) => {
 }
 
 const getScramble = (seed) => {
-  let scramble, scr, solution, ret;
+  let scr, solution, ret;
 
-  scramble = '';
   scr = getRandomState(seed);
   solution = search(scr);
   solution.reverse();
